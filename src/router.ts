@@ -1,6 +1,7 @@
 import { IncomingMessage, ServerResponse } from "http";
 
 import directionManager from "./directionManager";
+import financeCalculation from "./financeCalc";
 import findPlaceMan from "./findPlaceMan";
 
 const handleCORS = (response: ServerResponse): void => {
@@ -41,11 +42,10 @@ export default async (req: IncomingMessage, res: ServerResponse): Promise<any> =
     switch (req.url?.split("?")[0]) {
         case "/routekm":
             if (!(parsed.origin && parsed.destiny)) return res.end("Need origin and destiny parameters - strings")
-            const a: string = JSON.stringify(await directionManager(parsed.origin, parsed.destiny))
+            const a: string = JSON.stringify(financeCalculation((await Promise.all([directionManager("Mokropeska, 1713", parsed.origin), directionManager(parsed.origin, parsed.destiny), directionManager(parsed.destiny, "Mokropeska, 1713")])).reduce((a, b) => a + b, 0), 2))
             res.writeHead(200, {'Content-Type': 'application/json'})
             res.write(a)
             res.end()
-
             break;
         
         case "/placeGet": 
@@ -54,8 +54,16 @@ export default async (req: IncomingMessage, res: ServerResponse): Promise<any> =
             res.writeHead(200, {'Content-Type': 'application/json'})
             res.write(c)
             res.end()
+            break;
 
-            break
+        case "/homego":
+            if (!parsed.destiny) return res.end("Need destiny parameter - string");
+            const b: string = JSON.stringify(financeCalculation(await directionManager("Mokropeska 1713", parsed.destiny), 3))
+            res.writeHead(200, {'Content-Type': 'application/json'})
+            res.write(b)
+            res.end()
+            break;
+        
         default:
             res.end("404 NOT FOUND")
             break;

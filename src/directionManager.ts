@@ -22,6 +22,8 @@ export default async (startPoint: string, destinationPoint: string) => {
           apiKey
       )
     );
+    console.log(response.data.routes[0].legs[0].distance.value);
+    
     return response.data.routes[0].legs[0].distance.value;
   } catch (e) {
     console.log(response?.data, e);
