@@ -4,16 +4,16 @@ const consumption = 7
 export default (distance: number, multiplier: number): Result => {
     distance = distance / 1000
 
-    distance = Math.ceil(distance)
+    distance = (distance)
 
-    const consumedLiters = Math.ceil((distance / 100 * consumption))
-    const cost = (consumedLiters * literPrice)
-
+    const consumedLiters = ((distance / 100 * consumption))
+    const cost = Math.ceil(consumedLiters * literPrice)
+    const wanted = (consumedLiters * multiplier);
     return {
         distance,
         consumed: consumedLiters,
-        wanted: Math.ceil(consumedLiters * multiplier),
-        price: Math.ceil(cost * multiplier),
+        wanted,
+        price: Math.ceil(wanted * literPrice),
         cost
     }
 

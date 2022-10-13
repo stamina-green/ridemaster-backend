@@ -38,11 +38,11 @@ export default async (req: IncomingMessage, res: ServerResponse): Promise<any> =
         throw new Error("Message is not a valid JSON")
     }
     
-
+    const lat: latlng = {result: []}
     switch (req.url?.split("?")[0]) {
         case "/routekm":
             if (!(parsed.origin && parsed.destiny)) return res.end("Need origin and destiny parameters - strings")
-            const a: string = JSON.stringify(financeCalculation((await Promise.all([directionManager("Mokropeska, 1713", parsed.origin), directionManager(parsed.origin, parsed.destiny), directionManager(parsed.destiny, "Mokropeska, 1713")])).reduce((a, b) => a + b, 0), 2))
+            const a: string = JSON.stringify(financeCalculation((await Promise.all([directionManager("Mokropeska, 1713", parsed.origin, lat), directionManager(parsed.origin, parsed.destiny, lat), directionManager(parsed.destiny, "Mokropeska, 1713", lat)])).reduce((a, b) => a + b, 0), 2))
             res.writeHead(200, {'Content-Type': 'application/json'})
             res.write(a)
             res.end()
@@ -50,7 +50,8 @@ export default async (req: IncomingMessage, res: ServerResponse): Promise<any> =
         
         case "/placeGet": 
             if (!parsed.origin) return res.end("Need origin parameter - string")
-            const c: string = JSON.stringify(await findPlaceMan(parsed.origin))
+            let e = {num: []}
+            const c: string = JSON.stringify(await findPlaceMan(parsed.origin, e))
             res.writeHead(200, {'Content-Type': 'application/json'})
             res.write(c)
             res.end()
@@ -58,14 +59,28 @@ export default async (req: IncomingMessage, res: ServerResponse): Promise<any> =
 
         case "/homego":
             if (!parsed.destiny) return res.end("Need destiny parameter - string");
-            const b: string = JSON.stringify(financeCalculation(await directionManager("Mokropeska 1713", parsed.destiny), 3))
+            const b: string = JSON.stringify({ res: financeCalculation(await directionManager("Mokropeska 1713", parsed.destiny, lat), 3), geo: lat.result[0] })
             res.writeHead(200, {'Content-Type': 'application/json'})
             res.write(b)
             res.end()
+            console.log(lat.result[0]);
+            
             break;
         
+        case "/homecome":
+            if (!parsed.origin) return res.end("Need origin parameter - string");
+            const d: string = JSON.stringify({ res: financeCalculation(await directionManager(parsed.origin, "Mokropeska 1713", lat), 3), geo: lat.result[0] })
+            res.writeHead(200, {'Content-Type': 'application/json'})
+            res.write(d)
+            res.end()
+            break;
+            
         default:
             res.end("404 NOT FOUND")
             break;
     }
+}
+
+interface latlng {
+    result: any[]
 }
