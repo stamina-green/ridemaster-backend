@@ -1,5 +1,7 @@
 import { IncomingMessage, ServerResponse } from "http";
 import Enquiry from "./entities/Enquiry";
+import Order from "./entities/Order";
+import User from "./entities/User";
 
 const handleCORS = (response: ServerResponse): void => {
     response.setHeader('Access-Control-Allow-Origin', '*');
@@ -40,7 +42,12 @@ export default async (req: IncomingMessage, res: ServerResponse): Promise<any> =
             if (!(parsed.origin && parsed.destiny)) return res.end("Need origin and destiny parameters - strings")
             const enquiry = await Enquiry.fromAddress(parsed.origin, parsed.destiny)
             return res.end(JSON.stringify(enquiry))
-            break;
+
+        case "/enquiry/accept":
+            if(!(parsed.id && parsed.userId)) return res.end("Need id and userId parameter - number")
+            const user = await User.fromId(parsed.userId);
+            const order = Order.acceptEnquiry(parsed.id, user)
+            return res.end(JSON.stringify(order))
             
         default:
             res.end("404 NOT FOUND")

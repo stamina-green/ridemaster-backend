@@ -11,13 +11,40 @@ datasource db {
 }
 
 model Enquiry {
+  id           Int      @id @default(autoincrement())
+  startAddress String
+  startLat     Float
+  startLng     Float
+  endAddress   String
+  endLat       Float
+  endLng       Float
+  length       Float
+  consumed     Float
+  cost         Int
+  price        Int
+  multiplier   Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  Order        Order[]
+}
+
+model User {
   id        Int      @id @default(autoincrement())
-  start     String
-  end       String
-  length    Float
-  consumed  Float
-  cost     Int
-  price     Int
+  email     String   @unique
+  password  String
+  username  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Order     Order[]
+}
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  status    String   @default("no status")
+  enquiryId Int
+  enquiry   Enquiry  @relation(fields: [enquiryId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

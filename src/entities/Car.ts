@@ -1,12 +1,14 @@
+import { defaultCarInfo } from "../config";
+
 export default class Car {
     company: string;
     model: string;
     consumption: number;
     
-    constructor (company: string, model: string, consumption: number) {
-        this.company = company;
-        this.model = model;
-        this.consumption = consumption;
+    constructor () {
+        this.company = defaultCarInfo.company;
+        this.model = defaultCarInfo.model;
+        this.consumption = defaultCarInfo.consumption;
     }
     
 }

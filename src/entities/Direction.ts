@@ -29,7 +29,8 @@ export default class Direction {
             apiKey
         )
       );
-
+            console.log(JSON.stringify(response.data));
+            
       return response.data.routes[0].legs[0].distance.value;
     } catch (e) {
       throw Error("Direction search problem");
