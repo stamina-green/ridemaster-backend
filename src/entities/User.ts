@@ -2,7 +2,6 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
-// function to convert to base64
 
 export default class User {
     id: number;
@@ -34,7 +33,8 @@ export default class User {
         if(!result) throw Error("User not found");
         return new User(result.id, result.email, result.username, result.password);
     }
-    public static async new(email: string, name: string, password: string) {
+    
+    public static async register(email: string, name: string, password: string) {
         const hashedPassword = await bcrypt.hash(password, 10);
         const result = await prisma.user.create({
             data: {
@@ -51,5 +51,15 @@ export default class User {
         if(result) return user;
         else throw Error("Password incorrect");
     }
-
+    public static async setNotificationToken(id: number, token: string) {
+        const result = await prisma.user.update({
+            where: {
+                id: id
+            },
+            data: {
+                notificationToken: token
+            }
+        });
+        return result;
+    }
 }

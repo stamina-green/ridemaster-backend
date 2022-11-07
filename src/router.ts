@@ -48,7 +48,12 @@ export default async (req: IncomingMessage, res: ServerResponse): Promise<any> =
             const user = await User.fromId(parsed.userId);
             const order = Order.acceptEnquiry(parsed.id, user)
             return res.end(JSON.stringify(order))
-            
+        case "/setNotificationToken":
+            if(!(parsed.token && parsed.userId)) return res.end("Need token and userId - string;number");
+            const result = await User.setNotificationToken(parsed.userId, parsed.token);
+            return res.end(JSON.stringify(result))
+
+
         default:
             res.end("404 NOT FOUND")
             break;
