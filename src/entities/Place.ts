@@ -20,7 +20,7 @@ export default class Place {
             search +
             "&key=" +
             apiKey +
-            "&fields=formatted_address,geometry"
+            "&fields=formatted_address,geometry&locationbias=point:50,14"
         )
         console.log(response.data.candidates[0]);
         
