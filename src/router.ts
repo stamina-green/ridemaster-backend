@@ -40,8 +40,12 @@ export default async (req: IncomingMessage, res: ServerResponse): Promise<any> =
     switch (req.url?.split("?")[0]) {
         case "/enquiry":
             if (!(parsed.origin && parsed.destiny)) return res.end("Need origin and destiny parameters - strings")
+            try{
             const enquiry = await Enquiry.fromAddress(parsed.origin, parsed.destiny)
             return res.end(JSON.stringify(enquiry))
+            } catch (e) {  
+                return res.end(e)
+            }
 
         case "/enquiry/accept":
             if(!(parsed.id && parsed.userId)) return res.end("Need id and userId parameter - number")
