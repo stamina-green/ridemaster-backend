@@ -44,7 +44,9 @@ export default async (req: IncomingMessage, res: ServerResponse): Promise<any> =
             const enquiry = await Enquiry.fromAddress(parsed.origin, parsed.destiny)
             return res.end(JSON.stringify(enquiry))
             } catch (e) {  
-                return res.end(e)
+                if (e instanceof Error) {
+                    return res.end(e.message)
+                }
             }
 
         case "/enquiry/accept":
