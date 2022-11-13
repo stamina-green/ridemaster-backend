@@ -33,8 +33,8 @@ export default async (req: IncomingMessage, res: ServerResponse): Promise<any> =
     try {
         parsed = JSON.parse(data)
     } catch (e) {
-        res.end();
-        throw new Error("Message is not a valid JSON")
+        res.end("Running");
+        return
     }
     
     switch (req.url?.split("?")[0]) {
