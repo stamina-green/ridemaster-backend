@@ -33,15 +33,21 @@ export default async (req: IncomingMessage, res: ServerResponse): Promise<any> =
     try {
         parsed = JSON.parse(data)
     } catch (e) {
-        res.end();
-        throw new Error("Message is not a valid JSON")
+        res.end("Running");
+        return
     }
     
     switch (req.url?.split("?")[0]) {
         case "/enquiry":
             if (!(parsed.origin && parsed.destiny)) return res.end("Need origin and destiny parameters - strings")
+            try{
             const enquiry = await Enquiry.fromAddress(parsed.origin, parsed.destiny)
             return res.end(JSON.stringify(enquiry))
+            } catch (e) {  
+                if (e instanceof Error) {
+                    return res.end(e.message)
+                }
+            }
 
         case "/enquiry/accept":
             if(!(parsed.id && parsed.userId)) return res.end("Need id and userId parameter - number")
